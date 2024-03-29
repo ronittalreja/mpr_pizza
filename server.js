@@ -5,28 +5,28 @@ const ejs = require('ejs')
 const path = require('path')
 const expressLayout = require('express-ejs-layouts')
 const PORT = process.env.PORT || 3300
-const mongoose = require('mongoose')
+// const mongoose = require('mongoose') // Commented out MongoDB connection
 const session = require('express-session')
 const flash = require('express-flash')
-const MongoDbStore = require('connect-mongo')(session)
+// const MongoDbStore = require('connect-mongo')(session) // Commented out MongoDB session store
 const passport = require('passport')
 const Emitter = require('events')
 
-// Database connection
-mongoose.connect(process.env.MONGO_CONNECTION_URL, { useNewUrlParser: true, useCreateIndex:true, useUnifiedTopology: true, useFindAndModify : true });
-const connection = mongoose.connection;
-connection.once('open', () => {
-    console.log('Database connected...');
-}).catch(err => {
-    console.log('Connection failed...')
-});
+// // Database connection
+// mongoose.connect(process.env.MONGO_CONNECTION_URL, { useNewUrlParser: true, useCreateIndex:true, useUnifiedTopology: true, useFindAndModify : true });
+// const connection = mongoose.connection;
+// connection.once('open', () => {
+//     console.log('Database connected...');
+// }).catch(err => {
+//     console.log('Connection failed...')
+// });
 
 
-// Session store
-let mongoStore = new MongoDbStore({
-                mongooseConnection: connection,
-                collection: 'sessions'
-            })
+// // Session store
+// let mongoStore = new MongoDbStore({
+//                 mongooseConnection: connection,
+//                 collection: 'sessions'
+//             })
 
 // Event emitter
 const eventEmitter = new Emitter()
@@ -36,14 +36,14 @@ app.set('eventEmitter', eventEmitter)
 app.use(session({
     secret: process.env.COOKIE_SECRET,
     resave: false,
-    store: mongoStore,
+    // store: mongoStore, // Commented out MongoDB session store
     saveUninitialized: false,
     cookie: { maxAge: 1000 * 60 * 60 * 24 } // 24 hour
 }))
 
 // Passport config
-const passportInit = require('./app/config/passport')
-passportInit(passport)
+// const passportInit = require('./app/config/passport') // Assuming passport configuration is not dependent on MongoDB
+// passportInit(passport)
 app.use(passport.initialize())
 app.use(passport.session())
 
@@ -73,21 +73,20 @@ const server = app.listen(PORT , () => {
             console.log(`Listening on port ${PORT}`)
         })
 
-// Socket
+// // Socket
 
-const io = require('socket.io')(server)
-io.on('connection', (socket) => {
-      // Join
-      socket.on('join', (orderId) => {
-        socket.join(orderId)
-      })
-})
+// const io = require('socket.io')(server)
+// io.on('connection', (socket) => {
+//       // Join
+//       socket.on('join', (orderId) => {
+//         socket.join(orderId)
+//       })
+// })
 
-eventEmitter.on('orderUpdated', (data) => {
-    io.to(`order_${data.id}`).emit('orderUpdated', data)
-})
+// eventEmitter.on('orderUpdated', (data) => {
+//     io.to(`order_${data.id}`).emit('orderUpdated', data)
+// })
 
-eventEmitter.on('orderPlaced', (data) => {
-    io.to('adminRoom').emit('orderPlaced', data)
-})
-
+// eventEmitter.on('orderPlaced', (data) => {
+//     io.to('adminRoom').emit('orderPlaced', data)
+// })
