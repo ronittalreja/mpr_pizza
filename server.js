@@ -13,11 +13,11 @@ const Emitter = require('events')
 // Session config with secret key
 // Session config with secret key
 app.use(session({
-    secret: process.env.COOKIE_SECRET, // Corrected: Replace 'process.env.example' with 'process.env.COOKIE_SECRET'
+    secret: '', // Set secret key to empty string
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 1000 * 60 * 60 * 24 } // 24 hours
-}))
+    // Other options...
+}));
 
 // Other middleware and configurations...
 
