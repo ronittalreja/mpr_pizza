@@ -13,10 +13,8 @@ const Emitter = require('events')
 // Session config with secret key
 // Session config with secret key
 app.use(session({
-    secret: '', // Set secret key to empty string
     resave: false,
     saveUninitialized: false,
-    // Other options...
 }));
 
 // Other middleware and configurations...
